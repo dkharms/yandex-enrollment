@@ -12,6 +12,7 @@ class ShopUnit(Base):
 
     id = Column(String, primary_key=True, index=True)
     name = Column(String, nullable=False)
+    date = Column(DateTime, nullable=False)
     parent_id = Column(String, ForeignKey("shopunits.id"))
     type = Column(Enum(ShopUnitType))
     price = Column(Integer, nullable=True)

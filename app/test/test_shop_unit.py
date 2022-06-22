@@ -62,3 +62,6 @@ def test_graph_dependecies_handling():
 
     sorted_units = list(shop_unit_graph)
     assert expected == sorted_units
+
+
+def test_create_shop_units(db):
