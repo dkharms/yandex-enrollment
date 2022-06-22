@@ -10,8 +10,7 @@ from sqlalchemy.orm import Session
 import app.schemas as s
 import app.models as m
 
-from app.dependencies import get_db, logger
-
+from app.utils import LoggerProxy, DatabaseProxy, ConfigProxy
 
 imports_router = APIRouter()
 
@@ -125,7 +124,10 @@ def create_or_update(item: s.ShopUnitImport, update_date: datetime, db: Session,
 
 
 @imports_router.post("/imports")
-async def import_entities(import_request: s.ShopUnitImportRequest, db: Session = Depends(get_db), log=Depends(logger)):
+async def import_entities(
+        import_request: s.ShopUnitImportRequest,
+        db: Session = Depends(DatabaseProxy), log=Depends(LoggerProxy)
+):
     shop_unit_graph = ShopUnitGraph(import_request.items)
     shop_unit_graph.sort()
 

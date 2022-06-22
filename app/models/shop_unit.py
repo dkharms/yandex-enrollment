@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum
 from sqlalchemy.orm import relationship, declarative_base
 
-
 from app.schemas import ShopUnitType
 
 Base = declarative_base()
