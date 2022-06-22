@@ -14,8 +14,11 @@ class ShopUnitImport(BaseModel):
     name: str = Field(description="Category or product name.")
     parentId: t.Union[None, UUID] = Field(description="Id of parent category.")
     type: ShopUnitType = Field(description="Product or category type.")
-    price: t.Union[None, int] = Field(description="Average price for category or price of product.")
+    price: t.Union[None, int] = Field(
+        description="Average price for category or price of product.")
+
 
 class ShopUnitImportRequest(BaseModel):
-    items: t.List[ShopUnitImport] = Field(description="List of products and categories.")
+    items: t.List[ShopUnitImport] = Field(
+        description="List of products and categories.")
     updateDate: datetime = Field(description="Update datetime.")
