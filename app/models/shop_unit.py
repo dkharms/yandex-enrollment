@@ -16,4 +16,7 @@ class ShopUnit(Base):
     type = Column(Enum(ShopUnitType))
     price = Column(Integer, nullable=True)
 
-    parent = relationship("ShopUnit", backref="children", remote_side=[id])
+    parent = relationship(
+        "ShopUnit", backref="children",
+        remote_side=[id], cascade="delete",
+    )

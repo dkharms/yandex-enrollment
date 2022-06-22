@@ -12,7 +12,7 @@ import app.models as m
 
 from app.utils import LoggerProxy, DatabaseProxy, ConfigProxy
 
-imports_router = APIRouter()
+imports_router = APIRouter(tags=["Must Have Endpoints"])
 
 
 class ShopUnitGraph(object):
