@@ -16,7 +16,8 @@ class ShopUnit(BaseModel):
     id: UUID = Field(description="Unique identifier.")
     name: str = Field(description="Category or product name.")
     date: datetime = Field(description="Update time.")
-    parentId: t.Union[None, UUID] = Field(description="Id of parent category.")
+    parent_id: t.Union[None, UUID] = Field(
+        description="Id of parent category.", alias="parentId")
     type: ShopUnitType = Field(description="Product or category type.")
     price: t.Union[None, int] = Field(
         description="Average price for category or price of product.")
@@ -25,3 +26,4 @@ class ShopUnit(BaseModel):
 
     class Config:
         orm_mode = True
+        allow_population_by_field_name = False

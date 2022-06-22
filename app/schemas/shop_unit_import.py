@@ -13,10 +13,12 @@ class ShopUnitImport(BaseModel):
     id: UUID = Field(description="Unique identifier.")
     name: str = Field(description="Category or product name.")
     parent_id: t.Union[None, UUID] = Field(
-        description="Id of parent category.", alias="parentId")
+        description="Id of parent category.", alias="parentId"
+    )
     type: ShopUnitType = Field(description="Product or category type.")
     price: t.Union[None, int] = Field(
-        description="Average price for category or price of product.")
+        description="Average price for category or price of product."
+    )
 
     @validator("price")
     def validate_price(cls, price, values):
@@ -26,12 +28,17 @@ class ShopUnitImport(BaseModel):
             raise ValueError("Product price must be >= 0!")
         return price
 
+    class Config:
+        allow_population_by_field_name = False
+
 
 class ShopUnitImportRequest(BaseModel):
     items: t.List[ShopUnitImport] = Field(
-        description="List of products and categories.")
+        description="List of products and categories."
+    )
     update_date: datetime = Field(
-        description="Update datetime.", alias="updateDate")
+        description="Update datetime.", alias="updateDate",
+    )
 
     @validator("update_date")
     def validate_update_date(cls, update_date):
@@ -41,3 +48,6 @@ class ShopUnitImportRequest(BaseModel):
             raise ValueError("Wrong update date format!")
         finally:
             return update_date
+
+    class Config:
+        allow_population_by_field_name = True

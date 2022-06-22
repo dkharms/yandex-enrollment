@@ -18,7 +18,7 @@ class Config(object):
     def restore_from_env(cls):
         ip = os.getenv("IP", "0.0.0.0")
         port = os.getenv("PORT", "80")
-        database_url = os.getenv("DATABASE_URL", "sqlite://")
+        database_url = os.getenv("DATABASE_URL", "sqlite:///./sql.db")
         env = os.getenv("ENV", "DEV")
 
         return cls(ip=ip, port=port, database_url=database_url, env=env)
@@ -66,7 +66,7 @@ class Database(object):
 
     @classmethod
     def restore_from_env(cls):
-        database_url = os.getenv("DATABASE_URL", "sqlite://")
+        database_url = os.getenv("DATABASE_URL", "sqlite:///./test.db")
 
         return Database(database_url=database_url)
 
