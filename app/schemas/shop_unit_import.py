@@ -4,9 +4,9 @@ from enum import Enum
 from uuid import UUID
 from datetime import datetime
 
-from app.schemas.shop_unit import ShopUnitType
-
 from pydantic import BaseModel, Field, validator
+
+from app.schemas.shop_unit import ShopUnitType
 
 
 class ShopUnitImport(BaseModel):
@@ -22,7 +22,7 @@ class ShopUnitImport(BaseModel):
     def validate_price(cls, price, values):
         if values["type"] == ShopUnitType.category and price != None:
             raise ValueError("Category must have null price!")
-        if price is None or price < 0:
+        if values["type"] == ShopUnitType.offer and (price is None or price < 0):
             raise ValueError("Product price must be >= 0!")
         return price
 
