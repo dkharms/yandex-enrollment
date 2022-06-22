@@ -4,7 +4,7 @@ from enum import Enum
 from uuid import UUID
 from datetime import datetime
 
-from .shop_unit import ShopUnitType
+from app.schemas.shop_unit import ShopUnitType
 
 from pydantic import BaseModel, Field, validator
 

@@ -22,3 +22,6 @@ class ShopUnit(BaseModel):
         description="Average price for category or price of product.")
     children: t.Union[None, t.List["ShopUnit"]] = Field(
         "List of products for category.")
+
+    class Config:
+        orm_mode = True
