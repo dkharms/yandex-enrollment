@@ -9,6 +9,7 @@ uvicorn = {extras = ["standard"], version = "*"}
 pynvim = "*"
 autopep8 = "*"
 sqlalchemy = "*"
+pytest = "*"
 
 [dev-packages]
 
