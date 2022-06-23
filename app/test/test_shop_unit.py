@@ -121,3 +121,19 @@ def test_create_offer(db):
     model = db.query(m.ShopUnit).get(str(unit.id))
     assert model is not None
     assert model.name == unit.name
+
+
+def test_get_offer(db):
+    model = db.query(m.ShopUnit).first()
+
+    response = client.get(
+        f"/nodes/{model.id}",
+        headers={
+            "Content-Type": "application/json; charset=utf-8"
+        }
+    )
+    assert response.status_code == 200
+    schema = s.ShopUnit.parse_obj(response.json())
+
+    assert model.id == str(schema.id)
+    assert model.name == schema.name
