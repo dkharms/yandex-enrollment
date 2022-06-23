@@ -80,6 +80,29 @@ def test_graph_dependecies_handling():
 def test_create_category(db):
     unit = s.ShopUnitImport(
         id=u.uuid4(), name="Some Name",
+        parentId=None, type=s.ShopUnitType.category, price=None,
+    )
+
+    request = s.ShopUnitImportRequest(
+        items=[unit],
+        updateDate=datetime.now(),
+    )
+    response = client.post(
+        "/imports", data=request.json(by_alias=True),
+        headers={
+            "Content-Type": "application/json; charset=utf-8"
+        }
+    )
+    assert response.status_code == 200
+
+    model = db.query(m.ShopUnit).get(str(unit.id))
+    assert model is not None
+    assert model.name == unit.name
+
+
+def test_create_offer(db):
+    unit = s.ShopUnitImport(
+        id=u.uuid4(), name="Some Name",
         parentId=None, type=s.ShopUnitType.offer, price=200,
     )
 
@@ -87,8 +110,12 @@ def test_create_category(db):
         items=[unit],
         updateDate=datetime.now(),
     )
-    response = client.post("/imports", data=request.json(by_alias=True),
-                           headers={"Content-Type": "application/json; charset=utf-8"})
+    response = client.post(
+        "/imports", data=request.json(by_alias=True),
+        headers={
+            "Content-Type": "application/json; charset=utf-8"
+        }
+    )
     assert response.status_code == 200
 
     model = db.query(m.ShopUnit).get(str(unit.id))

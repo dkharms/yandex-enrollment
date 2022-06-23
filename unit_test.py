@@ -7,6 +7,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+import pytest
 
 API_BASEURL = "http://localhost:80"
 
@@ -237,6 +238,7 @@ def test_nodes():
     print("Test nodes passed.")
 
 
+@pytest.mark.skip()
 def test_sales():
     params = urllib.parse.urlencode({
         "date": "2022-02-04T00:00:00.000Z"
@@ -246,6 +248,7 @@ def test_sales():
     print("Test sales passed.")
 
 
+@pytest.mark.skip()
 def test_stats():
     params = urllib.parse.urlencode({
         "dateStart": "2022-02-01T00:00:00.000Z",
@@ -268,6 +271,7 @@ def test_delete():
     print("Test delete passed.")
 
 
+@pytest.mark.skip()
 def test_all():
     test_import()
     test_nodes()
