@@ -1,3 +1,4 @@
 export ENV="TEST"
-export FILENAME="test.log"
-python -m pytest app/test/ -s -v
+export FILENAME="logs/test.log"
+export DATABASE_URL="sqlite:///instances/test-sql.db"
+python -m pytest app/test -s -v

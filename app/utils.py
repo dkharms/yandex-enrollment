@@ -8,20 +8,21 @@ from app.models import Base
 
 
 class Config(object):
-    def __init__(self, ip, port, database_url, env) -> None:
+    def __init__(self, ip, port, env) -> None:
         self.ip = ip
         self.port = port
-        self.database_url = database_url
         self.env = env
 
     @classmethod
     def restore_from_env(cls):
         ip = os.getenv("IP", "0.0.0.0")
         port = os.getenv("PORT", "80")
-        database_url = os.getenv("DATABASE_URL", "sqlite:///./sql.db")
         env = os.getenv("ENV", "DEV")
 
-        return cls(ip=ip, port=port, database_url=database_url, env=env)
+        os.makedirs("instances", exist_ok=True)
+        os.makedirs("logs", exist_ok=True)
+
+        return cls(ip=ip, port=port, env=env)
 
     def __call__(self) -> "Config":
         return self
@@ -45,7 +46,7 @@ class Logger(object):
     @classmethod
     def restore_from_env(cls):
         name = os.getenv("APP_NAME", "app")
-        filename = os.getenv("FILENAME", "info.log")
+        filename = os.getenv("FILENAME", "logs/dev.log")
 
         return Logger(name=name, filename=filename)
 
@@ -66,7 +67,9 @@ class Database(object):
 
     @classmethod
     def restore_from_env(cls):
-        database_url = os.getenv("DATABASE_URL", "sqlite:///./test.db")
+        database_url = os.getenv(
+            "DATABASE_URL", "sqlite:///instances/dev-sql.db"
+        )
 
         return Database(database_url=database_url)
 
