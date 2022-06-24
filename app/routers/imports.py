@@ -130,8 +130,6 @@ def create_or_update(item: s.ShopUnitImport, update_date: datetime, db: Session,
         db.add(item_model)
     db.commit()
 
-    update_parent_date(item_model, update_date, db, log)
-
 
 @imports_router.post("/imports")
 async def import_entities(
@@ -149,5 +147,8 @@ async def import_entities(
 
     for item in shop_unit_graph:
         create_or_update(item, import_request.update_date, db, log)
+        if item.parent_id is not None and item.parent_id not in shop_unit_graph:
+            item_model = db.query(m.ShopUnit).get(str(item.id))
+            update_parent_date(item_model, import_request.update_date, db, log)
 
     return Response(status_code=status.HTTP_200_OK)
