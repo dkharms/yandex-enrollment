@@ -1,12 +1,10 @@
-import os
-
 from fastapi import FastAPI, Response
 from fastapi.exceptions import RequestValidationError
 
 import app.schemas as s
 
 from app.routers import imports_router, delete_router, nodes_router
-from app.utils import ConfigProxy, DatabaseProxy, LoggerProxy
+from app.utils import DatabaseProxy
 
 
 app = FastAPI(title="Yandex Enrollment", version="1.0.0")
@@ -24,4 +22,3 @@ async def validation_exception_handler(request, exc):
 @app.on_event("startup")
 def startup_application():
     DatabaseProxy.init()
-    LoggerProxy().info(f"running in {ConfigProxy.env} environment")

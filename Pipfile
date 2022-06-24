@@ -11,6 +11,7 @@ autopep8 = "*"
 sqlalchemy = "*"
 pytest = "*"
 requests = "*"
+pipfile = "*"
 
 [dev-packages]
 
