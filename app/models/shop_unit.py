@@ -18,5 +18,5 @@ class ShopUnit(Base):
 
     parent = relationship(
         "ShopUnit", backref="children",
-        remote_side=[id], cascade="delete",
+        remote_side=[id],
     )
