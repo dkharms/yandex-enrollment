@@ -1,5 +1,6 @@
 import typing as t
 
+from uuid import UUID
 from logging import Logger
 from datetime import datetime
 
@@ -57,18 +58,18 @@ class ShopUnitGraph(object):
 
 
 def validate_unique_ids(items: t.List[s.ShopUnitImport]):
-    seen_ids = set()
+    seen_ids = {}
 
     for item in items:
         if item.id in seen_ids:
             raise RequestValidationError(errors=["Validation Failed"])
-        seen_ids.add(item.id)
+        seen_ids[item.id] = item
 
     return seen_ids
 
 
 def validate_parent_entity(
-        items: t.List[s.ShopUnitImport], shop_unit_graph: ShopUnitGraph,
+        items: t.List[s.ShopUnitImport], items_dict: t.Dict[UUID, s.ShopUnitImport],
         db: Session, log: Logger
 ):
     for item in items:
@@ -79,8 +80,8 @@ def validate_parent_entity(
         if item.parent_id is None:
             continue
 
-        if item.parent_id in shop_unit_graph:
-            parent_item = shop_unit_graph[item.parent_id]
+        if item.parent_id in items_dict:
+            parent_item = items_dict[item.parent_id]
             if parent_item.type == s.ShopUnitType.offer:
                 raise RequestValidationError(errors=["Validation Failed"])
             continue
@@ -138,16 +139,13 @@ async def import_entities(
 ):
     log.info(f"got request for import: amount={len(import_request.items)}")
 
-    shop_unit_graph = ShopUnitGraph(import_request.items)
-    shop_unit_graph.sort()
-
-    validate_unique_ids(import_request.items)
+    items_dict = validate_unique_ids(import_request.items)
     validate_type_consistency(import_request.items, db, log)
-    validate_parent_entity(import_request.items, shop_unit_graph, db, log)
+    validate_parent_entity(import_request.items, items_dict, db, log)
 
-    for item in shop_unit_graph:
+    for item in items_dict.values():
         create_or_update(item, import_request.update_date, db, log)
-        if item.parent_id is not None and item.parent_id not in shop_unit_graph:
+        if item.parent_id is not None and item.parent_id not in items_dict:
             item_model = db.query(m.ShopUnit).get(str(item.id))
             update_parent_date(item_model, import_request.update_date, db, log)
 
