@@ -13,6 +13,11 @@ app.include_router(delete_router)
 app.include_router(nodes_router)
 
 
+@app.get("/ping")
+def ping():
+    return {"msg": "pong"}
+
+
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc):
     error = s.Error(code=400, message="Validation Failed")

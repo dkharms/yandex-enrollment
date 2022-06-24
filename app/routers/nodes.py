@@ -40,7 +40,7 @@ def get_category_entities(current_entity: m.ShopUnit, db: Session, log: Logger):
 
         current_model.children.append(child_model)
 
-    if current_model.type == s.ShopUnitType.category and len(current_model.children) == 0:
+    if current_model.type == s.ShopUnitType.category and current_amount == 0:
         current_model.price = None
     elif current_model.type == s.ShopUnitType.category:
         current_model.price = int(current_sum / current_amount)
