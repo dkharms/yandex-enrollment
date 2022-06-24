@@ -1,4 +1,4 @@
-export ENV=$1
+ENV=$1
 
 if [ $ENV == 'DEV' ]; then
     export PORT="8000"

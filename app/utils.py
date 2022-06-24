@@ -1,5 +1,7 @@
 import os
-import logging
+import loguru
+
+from loguru import logger
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -8,21 +10,19 @@ from app.models import Base
 
 
 class Config(object):
-    def __init__(self, ip, port, env) -> None:
+    def __init__(self, ip, port) -> None:
         self.ip = ip
         self.port = port
-        self.env = env
 
     @classmethod
     def restore_from_env(cls):
         ip = os.getenv("IP", "0.0.0.0")
         port = os.getenv("PORT", "80")
-        env = os.getenv("ENV", "DEV")
 
         os.makedirs("instances", exist_ok=True)
         os.makedirs("logs", exist_ok=True)
 
-        return cls(ip=ip, port=port, env=env)
+        return cls(ip=ip, port=port)
 
     def __call__(self) -> "Config":
         return self
@@ -30,18 +30,10 @@ class Config(object):
 
 class Logger(object):
     def __init__(self, name, filename) -> None:
-        formatter = logging.Formatter(
-            '[%(levelname)s]:%(asctime)s:%(filename)s:%(funcName)s: %(message)s'
+        logger.remove()
+        logger.add(
+            filename, format="[{level}] ({time}) <{function}>: {message}", colorize=True
         )
-
-        self.log = logging.getLogger(name)
-        self.log.setLevel(logging.DEBUG)
-
-        ch = logging.FileHandler(filename)
-        ch.setLevel(logging.DEBUG)
-        ch.setFormatter(formatter)
-
-        self.log.addHandler(ch)
 
     @classmethod
     def restore_from_env(cls):
@@ -50,8 +42,8 @@ class Logger(object):
 
         return Logger(name=name, filename=filename)
 
-    def __call__(self) -> logging.Logger:
-        return self.log
+    def __call__(self) -> "loguru.Logger":
+        return logger
 
 
 class Database(object):

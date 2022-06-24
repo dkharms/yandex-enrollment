@@ -12,6 +12,7 @@ sqlalchemy = "*"
 pytest = "*"
 requests = "*"
 pipfile = "*"
+loguru = "*"
 
 [dev-packages]
 
