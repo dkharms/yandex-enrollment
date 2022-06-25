@@ -2,6 +2,7 @@ import uuid as u
 
 from datetime import datetime
 
+from sqlalchemy.orm import Session
 from fastapi.testclient import TestClient
 
 import app.schemas as s
@@ -58,7 +59,7 @@ DatabaseProxy.init()
 
 
 def test_graph_dependecies_handling():
-    from app.routers.imports import ShopUnitGraph
+    from app.utils import ShopUnitGraph
 
     expected = [
         u.UUID("3fa85f64-5717-4562-b3fc-2c963f66afa5"),
@@ -123,7 +124,7 @@ def test_create_offer(db):
     assert model.name == unit.name
 
 
-def test_get_offer(db):
+def test_get_offer(db: Session):
     model = db.query(m.ShopUnit).first()
 
     response = client.get(
@@ -137,3 +138,27 @@ def test_get_offer(db):
 
     assert model.id == str(schema.id)
     assert model.name == schema.name
+
+
+def test_delete_category(db: Session):
+    model = db.query(m.ShopUnit).filter_by(
+        type=s.ShopUnitType.category).first()
+
+    model_id = model.id
+    response = client.delete(
+        f"/delete/{model_id}",
+        headers={
+            "Content-Type": "application/json; charset=utf-8"
+        }
+    )
+
+    assert response.status_code == 200
+
+    response = client.get(
+        f"/nodes/{model_id}",
+        headers={
+            "Content-Type": "application/json; charset=utf-8"
+        }
+    )
+
+    assert response.status_code == 404

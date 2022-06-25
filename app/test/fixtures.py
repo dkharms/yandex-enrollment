@@ -3,7 +3,7 @@ import pytest
 from app.utils import DatabaseProxy
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def db():
-    db = DatabaseProxy()
-    yield from db
+    yield from DatabaseProxy()
+    DatabaseProxy.destroy()

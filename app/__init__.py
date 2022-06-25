@@ -14,7 +14,7 @@ app.include_router(nodes_router)
 app.include_router(sales_router)
 
 
-@app.get("/ping")
+@app.get("/ping", tags=["State"])
 def ping():
     return {"msg": "pong"}
 
