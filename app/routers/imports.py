@@ -71,7 +71,6 @@ def update_parent_date(item: m.ShopUnit, update_date: datetime, db: Session, log
     log.debug(f"updating item: id={item.id} update_date={update_date}")
 
     item.date = update_date  # pyright: ignore
-    db.commit()
 
     log.info(f"updated item: id={item.id} update_date={update_date}")
     if item.parent is not None:
@@ -94,7 +93,7 @@ def create_or_update_unit(unit_schema: s.ShopUnitImport, update_date: datetime, 
         )
         db.add(unit_model)
 
-    db.commit()
+    db.flush()
 
 
 @imports_router.post("/imports")
@@ -116,5 +115,7 @@ async def import_units(
         if unit_schema.parent_id is not None and unit_schema.parent_id not in unit_schemas_dict:
             unit_model = db.query(m.ShopUnit).get(str(unit_schema.id))
             update_parent_date(unit_model, import_request.update_date, db, log)
+
+    db.commit()
 
     return Response(status_code=status.HTTP_200_OK)
