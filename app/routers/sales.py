@@ -16,13 +16,21 @@ from app.utils import LoggerProxy, DatabaseProxy
 sales_router = APIRouter(tags=["Bonus Endpoints"])
 
 
+def validate_date(date: str):
+    try:
+        return datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%fZ")
+    except Exception as e:
+        raise RequestValidationError("Wrong update date format!")
+
+
 @sales_router.get("/sales", response_model=s.ShopUnitSales)
-def sales(date: datetime, db: Session = Depends(DatabaseProxy), log: logging.Logger = Depends(LoggerProxy)):
-    from_time = date - timedelta(days=1)
+def sales(date: str, db: Session = Depends(DatabaseProxy), log: logging.Logger = Depends(LoggerProxy)):
+    date_obj = validate_date(date)
+    from_time = date_obj - timedelta(days=1)
 
     unit_models = db.query(m.ShopUnit).filter(
         (m.ShopUnit.type == s.ShopUnitType.offer) &
-        (from_time <= m.ShopUnit.date) & (m.ShopUnit.date <= date)
+        (from_time <= m.ShopUnit.date) & (m.ShopUnit.date <= date_obj)
     ).all()
 
     response_schema = s.ShopUnitSales(items=[])
