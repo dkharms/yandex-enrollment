@@ -103,6 +103,7 @@ async def import_units(
         db: Session = Depends(DatabaseProxy), log=Depends(LoggerProxy)
 ):
     log.info(f"got imports request: {len(import_request.items)}")
+
     unit_schemas_dict = validate_unique_ids(import_request.items)
     validate_type_consistency(import_request.items, db, log)
     validate_parent_entity(import_request.items, unit_schemas_dict, db, log)

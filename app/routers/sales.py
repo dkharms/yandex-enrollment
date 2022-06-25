@@ -1,10 +1,9 @@
 import logging
 import typing as t
 
-from uuid import UUID
 from datetime import datetime, timedelta
 
-from fastapi import APIRouter, Depends, status, Response
+from fastapi import APIRouter, Depends
 from fastapi.exceptions import RequestValidationError
 from sqlalchemy.orm import Session
 
@@ -25,6 +24,8 @@ def validate_date(date: str):
 
 @sales_router.get("/sales", response_model=s.ShopUnitSales)
 def sales(date: str, db: Session = Depends(DatabaseProxy), log: logging.Logger = Depends(LoggerProxy)):
+    log.info(f"got sales request: {date=}")
+
     date_obj = validate_date(date)
     from_time = date_obj - timedelta(days=1)
 
