@@ -11,6 +11,6 @@ elif [ $ENV == 'PROD' ]; then
     export IP="0.0.0.0"
     export FILENAME="logs/prod.log"
     export DATABASE_URL="instances/prod-sql.db"
-    uvicorn app:app --reload --port $PORT --host $IP --workers 10
+    uvicorn app:app --port $PORT --host $IP --workers 10
 fi
 
