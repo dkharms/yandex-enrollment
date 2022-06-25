@@ -50,9 +50,9 @@ class Logger(object):
 
 class Database(object):
     def __init__(self, database_url) -> None:
-        self.SQLALCHEMY_DATABASE_URL = database_url
+        self.database_url = database_url
         self.__engine = create_engine(
-            self.SQLALCHEMY_DATABASE_URL,
+            f"sqlite:///{self.database_url}",
             connect_args={"check_same_thread": False}
         )
         self.__SessionLocal = sessionmaker(
@@ -62,13 +62,16 @@ class Database(object):
     @classmethod
     def restore_from_env(cls):
         database_url = os.getenv(
-            "DATABASE_URL", "sqlite:///instances/dev-sql.db"
+            "DATABASE_URL", "instances/dev-sql.db"
         )
 
         return Database(database_url=database_url)
 
     def init(self):
         Base.metadata.create_all(bind=self.__engine)
+
+    def destroy(self):
+        os.remove(self.database_url)
 
     @property
     def engine(self):
