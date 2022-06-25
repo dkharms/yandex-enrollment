@@ -1,0 +1,19 @@
+[Unit]
+Description=Yandex Enrollment
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=-/usr/bin/docker exec %n stop
+ExecStartPre=-/usr/bin/docker rm %n
+ExecStartPre=/usr/bin/docker pull dkharms/docker-private:yandex-enrollment
+ExecStart=/usr/bin/docker run --rm --name %n \
+    -v /usr/local/yandex:/app/instances \
+    -v /usr/local/yandex:/app/logs \
+    -p 80:80 \
+    dkharms/docker-private:yandex-enrollment
+
+[Install]
+WantedBy=default.target
