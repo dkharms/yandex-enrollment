@@ -22,7 +22,9 @@ def ping():
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc):
     error = s.Error(code=400, message="Validation Failed")
-    return Response(content=error.json(), status_code=400)
+    return Response(content=error.json(), status_code=400, headers={
+        "Content-Type": "application/json",
+    })
 
 
 @app.on_event("startup")

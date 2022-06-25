@@ -54,7 +54,9 @@ def nodes_info(id: UUID, db: Session = Depends(DatabaseProxy), log: logging.Logg
     unit_model = db.query(m.ShopUnit).get(str(id))
     if unit_model is None:
         error = s.Error(code=404, message="Item not found")
-        return Response(content=error.json(), status_code=404)
+        return Response(content=error.json(), status_code=404, headers={
+            "Content-Type": "application/json",
+        })
 
     unit_schema, _, _ = deep_get_unit_info(unit_model, db, log)
 

@@ -31,7 +31,9 @@ def delete_unit(id: UUID, db: Session = Depends(DatabaseProxy), log: logging.Log
     unit_model = db.query(m.ShopUnit).get(str(id))
     if unit_model is None:
         error = s.Error(code=404, message="Item not found")
-        return Response(content=error.json(), status_code=404)
+        return Response(content=error.json(), status_code=404, headers={
+            "Content-Type": "application/json",
+        })
 
     delete_child_units(unit_model, db, log)
 
