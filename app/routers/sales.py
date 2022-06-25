@@ -23,7 +23,7 @@ def validate_date(date: str):
 
 
 @sales_router.get("/sales", response_model=s.ShopUnitSales)
-def sales(date: str, db: Session = Depends(DatabaseProxy), log: logging.Logger = Depends(LoggerProxy)):
+async def sales(date: str, db: Session = Depends(DatabaseProxy), log: logging.Logger = Depends(LoggerProxy)):
     log.info(f"got sales request: {date=}")
 
     date_obj = validate_date(date)

@@ -21,11 +21,10 @@ def delete_child_units(unit_model: m.ShopUnit, db: Session, log: logging.Logger)
         delete_child_units(child_unit, db, log)
 
     db.delete(unit_model)
-    db.commit()
 
 
 @delete_router.delete("/delete/{id}")
-def delete_unit(id: UUID, db: Session = Depends(DatabaseProxy), log: logging.Logger = Depends(LoggerProxy)):
+async def delete_unit(id: UUID, db: Session = Depends(DatabaseProxy), log: logging.Logger = Depends(LoggerProxy)):
     log.info(f"got delete request: {id=}")
 
     unit_model = db.query(m.ShopUnit).get(str(id))
@@ -36,5 +35,6 @@ def delete_unit(id: UUID, db: Session = Depends(DatabaseProxy), log: logging.Log
         })
 
     delete_child_units(unit_model, db, log)
+    db.commit()
 
     return Response(status_code=status.HTTP_200_OK)

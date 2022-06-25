@@ -48,7 +48,7 @@ def deep_get_unit_info(unit_model: m.ShopUnit, db: Session, log: logging.Logger)
 
 
 @nodes_router.get("/nodes/{id}", response_model=s.ShopUnit)
-def nodes_info(id: UUID, db: Session = Depends(DatabaseProxy), log: logging.Logger = Depends(LoggerProxy)):
+async def nodes_info(id: UUID, db: Session = Depends(DatabaseProxy), log: logging.Logger = Depends(LoggerProxy)):
     log.info(f"got nodes request: {id=}")
 
     unit_model = db.query(m.ShopUnit).get(str(id))
