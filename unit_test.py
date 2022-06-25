@@ -238,7 +238,6 @@ def test_nodes():
     print("Test nodes passed.")
 
 
-@pytest.mark.skip()
 def test_sales():
     params = urllib.parse.urlencode({
         "date": "2022-02-04T00:00:00.000Z"

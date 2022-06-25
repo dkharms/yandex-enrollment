@@ -7,7 +7,7 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 
-def convert_datetime_to_iso_8601_with_z_suffix(dt: datetime) -> str:
+def convert_datatime_to_valid_format(dt: datetime) -> str:
     return f"{dt.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]}Z"
 
 
@@ -33,7 +33,6 @@ class ShopUnit(BaseModel):
 
     class Config:
         orm_mode = True
-        allow_population_by_field_name = False
         json_encoders = {
-            datetime: convert_datetime_to_iso_8601_with_z_suffix
+            datetime: convert_datatime_to_valid_format
         }

@@ -27,9 +27,6 @@ class ShopUnitImport(BaseModel):
             raise ValueError("Product price must be >= 0!")
         return price
 
-    class Config:
-        allow_population_by_field_name = False
-
 
 class ShopUnitImportRequest(BaseModel):
     items: t.List[ShopUnitImport] = Field(
@@ -47,6 +44,3 @@ class ShopUnitImportRequest(BaseModel):
             raise ValueError("Wrong update date format!")
         finally:
             return update_date
-
-    class Config:
-        allow_population_by_field_name = True
