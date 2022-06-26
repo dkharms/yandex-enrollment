@@ -31,3 +31,9 @@ class ShopUnitStatisticResponse(BaseModel):
     items: t.List[ShopUnitStatisticUnit] = Field(
         description="Offers with updated prices"
     )
+
+    class Config:
+        orm_mode = True
+        json_encoders = {
+            datetime: convert_datatime_to_valid_format
+        }
