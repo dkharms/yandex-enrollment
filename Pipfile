@@ -13,6 +13,8 @@ pytest = "*"
 requests = "*"
 pipfile = "*"
 loguru = "*"
+pytest-cov = "*"
+pytest-order = "*"
 
 [dev-packages]
 
