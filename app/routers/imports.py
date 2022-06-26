@@ -16,65 +16,65 @@ from app.utils import LoggerProxy, DatabaseProxy
 imports_router = APIRouter(tags=["Required Endpoints"])
 
 
-def validate_unique_ids(items: t.List[s.ShopUnitImport]):
+def validate_unique_ids(units: t.List[s.ShopUnitImport]):
     seen_ids = {}
 
-    for item in items:
-        if item.id in seen_ids:
+    for unit in units:
+        if unit.id in seen_ids:
             raise RequestValidationError(errors=["Validation Failed"])
-        seen_ids[item.id] = item
+        seen_ids[unit.id] = unit
 
     return seen_ids
 
 
 def validate_parent_entity(
-        items: t.List[s.ShopUnitImport], items_dict: t.Dict[UUID, s.ShopUnitImport],
+        units: t.List[s.ShopUnitImport], units_dict: t.Dict[UUID, s.ShopUnitImport],
         db: Session, log: logging.Logger
 ):
-    for item in items:
+    for unit in units:
         log.debug(
-            f"validating parent entity: id={item.id} parent_id={item.parent_id}"
+            f"validating parent entity: id={unit.id} parent_id={unit.parent_id}"
         )
 
         # If entity has no parent, then we skip it.
-        if item.parent_id is None:
+        if unit.parent_id is None:
             continue
 
         # If entity has parent in POST body items, then we should check
         # if parent has type of CATEGORY.
-        if item.parent_id in items_dict:
-            parent_item = items_dict[item.parent_id]
-            if parent_item.type == s.ShopUnitType.offer:
+        if unit.parent_id in units_dict:
+            parent_unit = units_dict[unit.parent_id]
+            if parent_unit.type == s.ShopUnitType.offer:
                 raise RequestValidationError(errors=["Validation Failed"])
             continue
 
         # If entity's field parent_id is set, but parent doesn't contain in
         # POST body items or in database, then we should fail.
-        item_model = db.get(m.ShopUnit, str(item.parent_id))
-        if item_model is None:
+        unit_model = db.get(m.ShopUnit, str(unit.parent_id))
+        if unit_model is None:
             raise RequestValidationError(errors=["Validation Failed"])
 
-        if item_model.type == s.ShopUnitType.offer:
-            raise RequestValidationError(errors=["Validation Failed"])
-
-
-def validate_type_consistency(items: t.List[s.ShopUnitImport], db: Session, log: logging.Logger):
-    for item in items:
-        log.debug(f"validating type consistency: id={item.id}")
-
-        item_model = db.get(m.ShopUnit, str(item.id))
-        if item_model is not None and item_model.type != item.type:
+        if unit_model.type == s.ShopUnitType.offer:
             raise RequestValidationError(errors=["Validation Failed"])
 
 
-def update_parent_date(item: m.ShopUnit, update_date: datetime, db: Session, log: logging.Logger):
-    log.debug(f"updating item: id={item.id} update_date={update_date}")
+def validate_type_consistency(units: t.List[s.ShopUnitImport], db: Session, log: logging.Logger):
+    for unit in units:
+        log.debug(f"validating type consistency: id={unit.id}")
 
-    item.date = update_date  # pyright: ignore
+        unit_model = db.get(m.ShopUnit, str(unit.id))
+        if unit_model is not None and unit_model.type != unit.type:
+            raise RequestValidationError(errors=["Validation Failed"])
 
-    log.info(f"updated item: id={item.id} update_date={update_date}")
-    if item.parent is not None:
-        update_parent_date(item.parent, update_date, db, log)
+
+def update_parent_date(unit: m.ShopUnit, update_date: datetime, db: Session, log: logging.Logger):
+    log.debug(f"updating item: id={unit.id} update_date={update_date}")
+
+    unit.date = update_date  # pyright: ignore
+
+    log.info(f"updated item: id={unit.id} update_date={update_date}")
+    if unit.parent is not None:
+        update_parent_date(unit.parent, update_date, db, log)
 
 
 def create_or_update_unit(unit_schema: s.ShopUnitImport, update_date: datetime, db: Session, log: logging.Logger):

@@ -16,11 +16,13 @@ class ShopUnitImport(BaseModel):
     )
     type: ShopUnitType = Field(description="Product or category type.")
     price: t.Union[None, int] = Field(
-        description="Average price for category or price of product."
+        description="Average price for category or price of product.",
     )
 
-    @validator("price")
+    @validator("price", always=True)
     def validate_price(cls, price, values):
+        if "type" not in values:
+            raise ValueError("Wrong type!")
         if values["type"] == ShopUnitType.category and price != None:
             raise ValueError("Category must have null price!")
         if values["type"] == ShopUnitType.offer and (price is None or price < 0):
@@ -36,14 +38,13 @@ class ShopUnitImportRequest(BaseModel):
         description="Update datetime.", alias="updateDate",
     )
 
-    @validator("update_date")
+    @validator("update_date", pre=True)
     def validate_update_date(cls, update_date):
         try:
             datetime.strptime(update_date, "%Y-%m-%dT%H:%M:%S.%fZ")
         except Exception as e:
             raise ValueError("Wrong update date format!")
-        finally:
-            return update_date
+        return update_date
 
     class Config:
         orm_mode = True
