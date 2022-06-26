@@ -83,15 +83,17 @@ def create_or_update_unit(unit_schema: s.ShopUnitImport, update_date: datetime, 
 
     if unit_model is not None:
         unit_model.name, unit_model.date = unit_schema.name, update_date
-        unit_model.parent_id = str(unit_schema.parent_id)
         unit_model.price = unit_schema.price
     else:
         unit_model = m.ShopUnit(
             id=str(unit_schema.id), name=unit_schema.name,
-            date=update_date, parent_id=str(unit_schema.parent_id),
-            type=unit_schema.type, price=unit_schema.price,
+            date=update_date, price=unit_schema.price,
+            type=unit_schema.type,
         )
         db.add(unit_model)
+
+    if unit_schema.parent_id is not None:
+        unit_model.parent_id = str(unit_schema.parent_id)  # pyright: ignore
 
     db.flush()
 
