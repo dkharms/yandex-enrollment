@@ -5,7 +5,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field, validator
 
-from app.schemas.shop_unit import ShopUnitType
+from app.schemas.shop_unit import ShopUnitType, convert_datatime_to_valid_format
 
 
 class ShopUnitImport(BaseModel):
@@ -44,3 +44,9 @@ class ShopUnitImportRequest(BaseModel):
             raise ValueError("Wrong update date format!")
         finally:
             return update_date
+
+    class Config:
+        orm_mode = True
+        json_encoders = {
+            datetime: convert_datatime_to_valid_format
+        }
