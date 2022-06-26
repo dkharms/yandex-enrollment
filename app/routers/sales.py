@@ -37,7 +37,11 @@ async def sales(date: str, db: Session = Depends(DatabaseProxy), log: logging.Lo
     response_schema = s.ShopUnitSales(items=[])
     for unit_model in unit_models:
         unit_schema = s.ShopUnit.from_orm(unit_model)
-        unit_schema.parent_id = unit_model.parent_id
+
+        if unit_model.parent_id is not None:
+            unit_schema.parent_id = unit_model.parent_id
+
+        unit_schema.children = None
         response_schema.items.append(unit_schema)
 
     return response_schema
